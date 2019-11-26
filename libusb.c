@@ -17,9 +17,8 @@
  */
 
 
-#include <windows.h>
-#include <errno.h>
 
+#include <errno.h>
 #include "usb.h"
 
 #define LIBUSB_DLL_NAME "libusb0.dll"
@@ -49,6 +48,7 @@ typedef int (*usb_control_msg_t)(usb_dev_handle *dev, int requesttype,
                                  int request, int value, int index,
                                  char *bytes, int size, int timeout);
 typedef int (*usb_set_configuration_t)(usb_dev_handle *dev, int configuration);
+typedef int (*usb_get_configuration_t)(usb_dev_handle *dev, int *configuration);
 typedef int (*usb_claim_interface_t)(usb_dev_handle *dev, int interface);
 typedef int (*usb_release_interface_t)(usb_dev_handle *dev, int interface);
 typedef int (*usb_set_altinterface_t)(usb_dev_handle *dev, int alternate);
@@ -91,6 +91,7 @@ static usb_interrupt_write_t _usb_interrupt_write = NULL;
 static usb_interrupt_read_t _usb_interrupt_read = NULL;
 static usb_control_msg_t _usb_control_msg = NULL;
 static usb_set_configuration_t _usb_set_configuration = NULL;
+static usb_get_configuration_t _usb_get_configuration = NULL;
 static usb_claim_interface_t _usb_claim_interface = NULL;
 static usb_release_interface_t _usb_release_interface = NULL;
 static usb_set_altinterface_t _usb_set_altinterface = NULL;
@@ -99,7 +100,7 @@ static usb_clear_halt_t _usb_clear_halt = NULL;
 static usb_reset_t _usb_reset = NULL;
 static usb_reset_ex_t _usb_reset_ex = NULL;
 static usb_strerror_t _usb_strerror = NULL;
-static usb_init_t _usb_init = NULL;
+static usb_init_t usb_init2 = NULL;
 static usb_set_debug_t _usb_set_debug = NULL;
 static usb_find_busses_t _usb_find_busses = NULL;
 static usb_find_devices_t _usb_find_devices = NULL;
@@ -118,13 +119,16 @@ static usb_free_async_t _usb_free_async = NULL;
 
 
 
-
 void usb_init(void)
 {
-    HINSTANCE libusb_dll  = LoadLibrary(LIBUSB_DLL_NAME);
+    HINSTANCE libusb_dll  = LoadLibrary("C:\Windows\System32\libusb0.dll");
 
     if (!libusb_dll)
+    {
+        printf("dll failed\n");
         return;
+    }
+
 
     _usb_open = (usb_open_t)
                 GetProcAddress(libusb_dll, "usb_open");
@@ -150,6 +154,8 @@ void usb_init(void)
                        GetProcAddress(libusb_dll, "usb_control_msg");
     _usb_set_configuration = (usb_set_configuration_t)
                              GetProcAddress(libusb_dll, "usb_set_configuration");
+_usb_get_configuration = (usb_get_configuration_t)
+                             GetProcAddress(libusb_dll, "usb_get_configuration");
     _usb_claim_interface = (usb_claim_interface_t)
                            GetProcAddress(libusb_dll, "usb_claim_interface");
     _usb_release_interface = (usb_release_interface_t)
@@ -166,7 +172,7 @@ void usb_init(void)
                  GetProcAddress(libusb_dll, "usb_reset_ex");
     _usb_strerror = (usb_strerror_t)
                     GetProcAddress(libusb_dll, "usb_strerror");
-    _usb_init = (usb_init_t)
+    usb_init2 = (usb_init_t)
                 GetProcAddress(libusb_dll, "usb_init");
     _usb_set_debug = (usb_set_debug_t)
                      GetProcAddress(libusb_dll, "usb_set_debug");
@@ -199,8 +205,8 @@ void usb_init(void)
     _usb_free_async = (usb_free_async_t)
                       GetProcAddress(libusb_dll, "usb_free_async");
 
-    if (_usb_init)
-        _usb_init();
+    if (usb_init2)
+        usb_init2();
 }
 
 usb_dev_handle *usb_open(struct usb_device *dev)
@@ -307,6 +313,14 @@ int usb_set_configuration(usb_dev_handle *dev, int configuration)
 {
     if (_usb_set_configuration)
         return _usb_set_configuration(dev, configuration);
+    else
+        return -ENOFILE;
+}
+
+int usb_get_configuration(usb_dev_handle *dev, int *configuration)
+{
+    if (_usb_get_configuration)
+        return _usb_get_configuration(dev, configuration);
     else
         return -ENOFILE;
 }

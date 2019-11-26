@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <windows.h>
 
+
 /*
  * 'interface' is defined somewhere in the Windows header files. This macro
  * is deleted here to avoid conflicts and compile errors.
@@ -421,7 +422,7 @@ extern "C"
 
 #ifdef __cplusplus
 }
-#endif
+#endif*/
 
 #endif /* __USB_H__ */
 
