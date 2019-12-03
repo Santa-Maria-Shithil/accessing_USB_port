@@ -2,12 +2,12 @@
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
 	<File name="libusb.c" open="1" top="1" tabpos="1">
-		<Cursor position="6107" topLine="110" />
+		<Cursor position="6363" topLine="115" />
 	</File>
 	<File name="main.c" open="1" top="0" tabpos="3">
-		<Cursor position="3588" topLine="96" />
+		<Cursor position="4086" topLine="98" />
 	</File>
 	<File name="usb.h" open="1" top="0" tabpos="2">
-		<Cursor position="3877" topLine="288" />
+		<Cursor position="3653" topLine="84" />
 	</File>
 </CodeBlocks_layout_file>

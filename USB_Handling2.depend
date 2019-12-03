@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1574800790 source:c:\users\santa maria\desktop\usb_handling2\main.c
+1574952777 source:c:\users\santa maria\desktop\usb_handling2\main.c
 	<stdio.h>
 	<stdlib.h>
 	<sys/types.h>
@@ -7,7 +7,7 @@
 	<Windows.h>
 	"usb.h"
 
-1574800976 source:c:\users\santa maria\desktop\usb_handling2\libusb.c
+1574952662 source:c:\users\santa maria\desktop\usb_handling2\libusb.c
 	<errno.h>
 	"usb.h"
 

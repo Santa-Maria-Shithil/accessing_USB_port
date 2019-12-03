@@ -193,19 +193,8 @@ int main(void)
         hDevice_expected = handle;
     }
 
-    e = usb_get_configuration(handle, &config2);
-    if(e!=0)
-    {
-        printf("\n***Error in libusb_get_configuration\n");
-      //  usb_free_device_list(devs, 1);
-        usb_close(handle);
-        return -1;
-    }
-    printf("\nConfigured value: %d", config2);
 
-    if(config2 != 1)
-    {
-        usb_set_configuration(handle, 1);
+        e=usb_set_configuration(handle, 1);
         if(e!=0)
         {
             printf("Error in libusb_set_configuration\n");
@@ -215,7 +204,7 @@ int main(void)
         }
         else
             printf("\nDevice is in configured state!");
-    }
+
 
    // usb_free_device_list(devs, 1);
 

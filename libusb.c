@@ -100,7 +100,7 @@ static usb_clear_halt_t _usb_clear_halt = NULL;
 static usb_reset_t _usb_reset = NULL;
 static usb_reset_ex_t _usb_reset_ex = NULL;
 static usb_strerror_t _usb_strerror = NULL;
-static usb_init_t usb_init2 = NULL;
+static usb_init_t _usb_init = NULL;
 static usb_set_debug_t _usb_set_debug = NULL;
 static usb_find_busses_t _usb_find_busses = NULL;
 static usb_find_devices_t _usb_find_devices = NULL;
@@ -121,7 +121,7 @@ static usb_free_async_t _usb_free_async = NULL;
 
 void usb_init(void)
 {
-    HINSTANCE libusb_dll  = LoadLibrary("C:\Windows\System32\libusb0.dll");
+    HINSTANCE libusb_dll  = LoadLibrary(LIBUSB_DLL_NAME);
 
     if (!libusb_dll)
     {
@@ -154,8 +154,6 @@ void usb_init(void)
                        GetProcAddress(libusb_dll, "usb_control_msg");
     _usb_set_configuration = (usb_set_configuration_t)
                              GetProcAddress(libusb_dll, "usb_set_configuration");
-_usb_get_configuration = (usb_get_configuration_t)
-                             GetProcAddress(libusb_dll, "usb_get_configuration");
     _usb_claim_interface = (usb_claim_interface_t)
                            GetProcAddress(libusb_dll, "usb_claim_interface");
     _usb_release_interface = (usb_release_interface_t)
@@ -172,7 +170,7 @@ _usb_get_configuration = (usb_get_configuration_t)
                  GetProcAddress(libusb_dll, "usb_reset_ex");
     _usb_strerror = (usb_strerror_t)
                     GetProcAddress(libusb_dll, "usb_strerror");
-    usb_init2 = (usb_init_t)
+    _usb_init = (usb_init_t)
                 GetProcAddress(libusb_dll, "usb_init");
     _usb_set_debug = (usb_set_debug_t)
                      GetProcAddress(libusb_dll, "usb_set_debug");
@@ -205,8 +203,8 @@ _usb_get_configuration = (usb_get_configuration_t)
     _usb_free_async = (usb_free_async_t)
                       GetProcAddress(libusb_dll, "usb_free_async");
 
-    if (usb_init2)
-        usb_init2();
+    if (_usb_init)
+        _usb_init();
 }
 
 usb_dev_handle *usb_open(struct usb_device *dev)
@@ -317,13 +315,7 @@ int usb_set_configuration(usb_dev_handle *dev, int configuration)
         return -ENOFILE;
 }
 
-int usb_get_configuration(usb_dev_handle *dev, int *configuration)
-{
-    if (_usb_get_configuration)
-        return _usb_get_configuration(dev, configuration);
-    else
-        return -ENOFILE;
-}
+
 
 int usb_claim_interface(usb_dev_handle *dev, int interface)
 {
